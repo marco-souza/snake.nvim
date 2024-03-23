@@ -1,4 +1,4 @@
-<h1 align="center">Nvim Plugin Template</h1>
+<h1 align="center">🐍 Snake for Nvim</h1>
 <div>
   <h4 align="center">
     <a href="#dependencies">Dependencies</a> ·
@@ -9,12 +9,12 @@
   <a href="https://github.com/marco-souza/plugin.nvim/releases/latest"
     ><img
       alt="Latest release"
-      src="https://img.shields.io/github/v/release/marco-souza/plugin.nvim?style=for-the-badge&logo=starship&logoColor=D9E0EE&labelColor=302D41&&color=d9b3ff&include_prerelease&sort=semver"
+      src="https://img.shields.io/github/v/release/marco-souza/snake.nvim?style=for-the-badge&logo=starship&logoColor=D9E0EE&labelColor=302D41&&color=d9b3ff&include_prerelease&sort=semver"
   /></a>
-  <a href="https://github.com/marco-souza/plugin.nvim/pulse"
+  <a href="https://github.com/marco-souza/snake.nvim/pulse"
     ><img
       alt="Last commit"
-      src="https://img.shields.io/github/last-commit/marco-souza/plugin.nvim?style=for-the-badge&logo=github&logoColor=D9E0EE&labelColor=302D41&color=9fdf9f"
+      src="https://img.shields.io/github/last-commit/marco-souza/snake.nvim?style=for-the-badge&logo=github&logoColor=D9E0EE&labelColor=302D41&color=9fdf9f"
   /></a>
   <a href="https://github.com/neovim/neovim/releases/latest"
     ><img
@@ -34,17 +34,15 @@
 </div>
 <hr />
 
-Neovim Plugin template (`plugin.nvim`) is a template repository for bootstrapping a neovim plugin.
+🐍 Snake game for Neovim (`snake.nvim`).
 
 ## Install
 
 ```lua
 -- Lazy plugin
 {
-  "marco-souza/plugin.nvim",
-  config = function()
-    require("plugin").setup()
-  end,
+  "marco-souza/snake.nvim",
+  config = true,
 },
 ```
 
@@ -52,3 +50,6 @@ Neovim Plugin template (`plugin.nvim`) is a template repository for bootstrappin
 
 Install it with your plugin manager, then add a keymap to the following command:
 
+```sh
+:Snake
+```
