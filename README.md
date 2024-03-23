@@ -1,7 +1,7 @@
 <h1 align="center">🐍 Snake for Neovim</h1>
 <div>
   <h4 align="center">
-    <a href="#dependencies">Dependencies</a> ·
+    <a href="#install">Install</a> ·
     <a href="#usage">Usage</a>
   </h4>
 </div>
