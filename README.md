@@ -1,4 +1,4 @@
-<h1 align="center">🐍 Snake for Nvim</h1>
+<h1 align="center">🐍 Snake for Neovim</h1>
 <div>
   <h4 align="center">
     <a href="#dependencies">Dependencies</a> ·
