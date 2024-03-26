@@ -1,5 +1,5 @@
 return {
   setup = function()
-    require("snake.game").start()
+    require("snake.game").setup()
   end,
 }

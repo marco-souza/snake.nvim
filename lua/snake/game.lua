@@ -1,60 +1,78 @@
 require("utils")
 
-local M = {}
+local Snake = R("snake.snake")
+local window = R("snake.window")
 
-M.start = function()
-  local Snake = R("snake.snake")
-  local window = R("snake.window")
-  local snake = Snake:new()
-  local velocity = 500
+local GameState = {
+  velocity = 0,
+  board = {},
+  food = {},
+  snake = {},
+}
 
-  -- commands
-  local open_game = function()
-    window.open()
+GameState.init = function(snake)
+  -- initial state
+  GameState = vim.tbl_deep_extend("force", GameState, {
+    food = {},
+    board = { "Hello World 🌎" }, -- TODO: generate empty board
+    velocity = 500, -- ms
+    snake = snake,
+  })
+end
 
-    local line = "Hello World 🌎"
-    local lines = { line }
-
-    local function update()
-      -- update state
-      line = " " .. line
-      -- table.insert(lines, line)
-      lines = { line }
-    end
-
-    local function view()
-      -- update view
-      window.write_lines(lines)
-    end
-
-    local function loop()
-      update()
-
-      view()
-
-      -- schedule next call
-      vim.defer_fn(loop, velocity)
-    end
-
-    -- start loop
-    vim.defer_fn(loop, 0)
-  end
-
-  vim.api.nvim_create_user_command(
-    "Snake",
-    open_game,
-    { desc = "Start Snake game" }
-  )
-
-  -- keymap
-  for key in pairs(Snake.direction_map) do
-    local move = function()
-      snake.change_dir(key)
-    end
-
-    -- TODO: set keys inside window only
-    -- vim.keymap.set({ "n" }, key, move, { noremap = true, silent = true })
+GameState.update = function()
+  for index, value in ipairs(GameState.board) do
+    GameState.board[index] = " " .. value
   end
 end
 
-return M
+GameState.view = function()
+  -- update view
+  window.write_lines(GameState.board)
+end
+
+local Game = {}
+
+Game.start = function()
+  GameState.init(Snake:new())
+  window.open()
+
+  local function loop()
+    GameState.update()
+
+    GameState.view()
+
+    -- schedule next call
+    vim.defer_fn(loop, GameState.velocity)
+  end
+
+  -- start loop
+  vim.defer_fn(loop, 0)
+end
+
+Game.setup = function()
+  -- commands
+  vim.api.nvim_create_user_command("Snake", function()
+    Game.start()
+  end, { desc = "Start Snake game" })
+
+  -- keymap
+  local opts = {
+    noremap = true,
+    silent = true,
+    buffer = window.buf,
+  }
+
+  for key in pairs(Snake.direction_map) do
+    local move = function()
+      GameState.snake.change_dir(key)
+    end
+
+    -- TODO: set keys inside window only
+    vim.keymap.set({ "n" }, key, move, opts)
+  end
+
+  vim.keymap.set({ "n" }, "q", ":q<CR>", opts)
+end
+
+return Game
