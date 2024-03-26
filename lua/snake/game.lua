@@ -22,12 +22,12 @@ end
 GameState.view = function()
   -- update view
   window.write_lines(GameState.board)
+  GameState.snake:print()
 end
 
 local Game = {}
 
 Game.start = function()
-  GameState.init(Snake:new())
   window.open()
 
   local function loop()
@@ -36,7 +36,9 @@ Game.start = function()
     GameState.view()
 
     -- schedule next call
-    vim.defer_fn(loop, GameState.velocity)
+    if GameState.velocity ~= 0 then
+      vim.defer_fn(loop, GameState.velocity)
+    end
   end
 
   -- start loop
@@ -61,11 +63,18 @@ Game.setup = function()
       GameState.snake:change_dir(key)
     end
 
-    -- TODO: set keys inside window only
     vim.keymap.set({ "n" }, key, move, opts)
   end
 
-  vim.keymap.set({ "n" }, "q", ":q<CR>", opts)
+  local function quit()
+    if GameState.velocity == 0 then
+      GameState.velocity = 500
+      Game.start()
+    else
+      GameState.velocity = 0
+    end
+  end
+  vim.keymap.set({ "n" }, "q", quit, opts)
 end
 
 return Game
