@@ -3,26 +3,52 @@ require("utils")
 local Snake = R("snake.snake")
 local window = R("snake.window")
 
+local empty_block = " "
+local snake_block = "#"
+local board_width = 80
+local board_height = 40
+
+local function make_empty_board(height, width)
+  local board = {}
+
+  for i = 1, height do
+    local line = {}
+    for j = 1, width do
+      table.insert(line, empty_block)
+    end
+    table.insert(board, line)
+  end
+
+  return board
+end
+
 -- initial state
 local GameState = {
-  food = {},
   velocity = 500, -- ms
   snake = Snake:new(),
-  board = { "Hello World 🌎" }, -- TODO: generate empty board
+  board = make_empty_board(board_height, board_width),
 }
 
 GameState.update = function()
+  -- update
   GameState.snake:move()
-
-  for index, value in ipairs(GameState.board) do
-    GameState.board[index] = " " .. value
-  end
 end
 
 GameState.view = function()
-  -- update view
-  window.write_lines(GameState.board)
-  GameState.snake:print()
+  local board = make_empty_board(board_height, board_width)
+
+  -- print snake
+  for _, pos in ipairs(GameState.snake.queue) do
+    board[pos.y][pos.x] = snake_block
+  end
+
+  -- make view
+  local view = {}
+  for _, line in ipairs(board) do
+    table.insert(view, table.concat(line, ""))
+  end
+
+  window.write_lines(view)
 end
 
 local Game = {}

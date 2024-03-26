@@ -5,7 +5,7 @@ local direction_map = {
   j = "d",
 }
 
-local initial_position = { x = 0, y = 0 }
+local initial_position = { x = 1, y = 1 }
 local Snake = {
   queue = { initial_position },
   direction = "r", -- u d l r
@@ -33,9 +33,9 @@ function Snake:move()
   end
 
   if self.direction == "u" then
-    pos.y = pos.y + 1
-  elseif self.direction == "d" then
     pos.y = pos.y - 1
+  elseif self.direction == "d" then
+    pos.y = pos.y + 1
   end
 
   table.insert(self.queue, 1, pos)
