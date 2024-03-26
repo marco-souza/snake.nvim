@@ -3,24 +3,17 @@ require("utils")
 local Snake = R("snake.snake")
 local window = R("snake.window")
 
+-- initial state
 local GameState = {
-  velocity = 0,
-  board = {},
   food = {},
-  snake = {},
+  velocity = 500, -- ms
+  snake = Snake:new(),
+  board = { "Hello World 🌎" }, -- TODO: generate empty board
 }
 
-GameState.init = function(snake)
-  -- initial state
-  GameState = vim.tbl_deep_extend("force", GameState, {
-    food = {},
-    board = { "Hello World 🌎" }, -- TODO: generate empty board
-    velocity = 500, -- ms
-    snake = snake,
-  })
-end
-
 GameState.update = function()
+  GameState.snake:move()
+
   for index, value in ipairs(GameState.board) do
     GameState.board[index] = " " .. value
   end
@@ -65,7 +58,7 @@ Game.setup = function()
 
   for key in pairs(Snake.direction_map) do
     local move = function()
-      GameState.snake.change_dir(key)
+      GameState.snake:change_dir(key)
     end
 
     -- TODO: set keys inside window only

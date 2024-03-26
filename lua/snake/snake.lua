@@ -1,14 +1,14 @@
 local direction_map = {
-  h = "left",
-  l = "right",
-  k = "up",
-  j = "down",
+  h = "l",
+  l = "r",
+  k = "u",
+  j = "d",
 }
 
+local initial_position = { x = 0, y = 0 }
 local Snake = {
-  position = { x = 0, y = 0 },
-  queue = {},
-  direction = "l", -- u d l r
+  queue = { initial_position },
+  direction = "r", -- u d l r
   size = 3, -- snake size
 }
 
@@ -18,16 +18,18 @@ function Snake:new()
   setmetatable(instance, self)
   self.__index = self
 
+  self:init()
+
   return instance
 end
 
 function Snake:move()
-  local pos = self.position
+  local pos = vim.tbl_deep_extend("force", {}, self.queue[1])
 
   if self.direction == "l" then
-    pos.x = pos.x + 1
-  elseif self.direction == "r" then
     pos.x = pos.x - 1
+  elseif self.direction == "r" then
+    pos.x = pos.x + 1
   end
 
   if self.direction == "u" then
@@ -39,8 +41,23 @@ function Snake:move()
   table.insert(self.queue, 1, pos)
 
   if #self.queue > self.size then
-    table.remove(self.queue, 1)
+    table.remove(self.queue, #self.queue)
   end
+end
+
+function Snake:init()
+  ---@diagnostic disable-next-line: unused-local
+  for i = 1, self.size do
+    self:move()
+  end
+end
+
+function Snake:print()
+  local res = ""
+  for index, value in ipairs(self.queue) do
+    res = res .. "(" .. value.x .. ", " .. value.y .. "), "
+  end
+  print(res)
 end
 
 function Snake:change_dir(dir)
@@ -49,7 +66,7 @@ function Snake:change_dir(dir)
     return
   end
 
-  self.direction = dir
+  self.direction = direction_map[dir]
 end
 
 Snake.direction_map = direction_map
