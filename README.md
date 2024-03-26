@@ -53,3 +53,8 @@ Install it with your plugin manager, then add a keymap to the following command:
 ```sh
 :Snake
 ```
+
+### Demo
+
+
+https://github.com/marco-souza/snake.nvim/assets/4452113/731bfc3e-6e4d-4363-a164-ac48487f2fc9
