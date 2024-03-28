@@ -32,6 +32,15 @@ local GameState = {
 GameState.update = function()
   -- update
   GameState.snake:move()
+
+  -- TODO: check board collision
+  -- TODO: check snake collision
+
+  -- TODO: generate food
+  -- TODO: check food collision
+
+  -- TODO: scoreboard
+  -- TODO: restart game
 end
 
 GameState.view = function()
