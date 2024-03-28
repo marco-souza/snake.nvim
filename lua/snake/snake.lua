@@ -66,7 +66,18 @@ function Snake:change_dir(dir)
     return
   end
 
-  self.direction = direction_map[dir]
+  local new_dir = direction_map[dir]
+
+  if
+    (new_dir == "l" and self.direction == "r")
+    or (new_dir == "r" and self.direction == "l")
+    or (new_dir == "u" and self.direction == "d")
+    or (new_dir == "d" and self.direction == "u")
+  then
+    return
+  end
+
+  self.direction = new_dir
 end
 
 Snake.direction_map = direction_map
