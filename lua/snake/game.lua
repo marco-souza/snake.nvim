@@ -5,8 +5,6 @@ local window = R("snake.window")
 
 local empty_block = " "
 local snake_block = "#"
-local board_width = 80
-local board_height = 40
 
 local function make_empty_board(height, width)
   local board = {}
@@ -22,21 +20,32 @@ local function make_empty_board(height, width)
   return board
 end
 
--- TODO: move it to a class so we can restart/re-instantiate it
 -- initial state
-local GameState = {
-  velocity = 500, -- ms
-  status = "running", -- 'running' | 'game-over'
-  snake = Snake:new(),
-  board = make_empty_board(board_height, board_width),
-}
+local GameState = {}
 
-GameState.update = function()
-  -- update
-  GameState.snake:move()
+function GameState:new(width, height)
+  local instance = {}
+  setmetatable(instance, self)
+  self.__index = self
 
-  if GameState.snake:board_colision_check(board_width, board_height) then
-    GameState.status = "game-over"
+  self:init(width, height)
+
+  return instance
+end
+
+function GameState:init(width, hight)
+  self.velocity = 500 -- ms
+  self.status = "running" -- 'idle' | 'running' | 'game-over'
+  self.snake = Snake:new()
+  self.board_width = width
+  self.board_height = hight
+end
+
+function GameState:update()
+  self.snake:move()
+
+  if self.snake:board_colision_check(self.board_height, self.board_width) then
+    self.status = "game-over"
   end
 
   -- TODO: check snake collision
@@ -48,10 +57,10 @@ GameState.update = function()
   -- TODO: restart game
 end
 
-GameState.view = function()
-  local board = make_empty_board(board_height, board_width)
+function GameState:view()
+  local board = make_empty_board(self.board_height, self.board_width)
 
-  if GameState.status == "game-over" then
+  if self.status == "game-over" then
     -- print game over screen
     local view = {
       "",
@@ -65,7 +74,7 @@ GameState.view = function()
   end
 
   -- print snake
-  for _, pos in ipairs(GameState.snake.queue) do
+  for _, pos in ipairs(self.snake.queue) do
     board[pos.y][pos.x] = snake_block
   end
 
@@ -78,23 +87,54 @@ GameState.view = function()
   window.write_lines(view)
 end
 
-local Game = {}
+local Game = {
+  state = GameState:new(),
+}
 
-Game.start = function()
+function Game:new()
+  local instance = {}
+  setmetatable(instance, self)
+  self.__index = self
+
+  self.width = 80
+  self.height = 40
+
+  self.state = GameState:new(self.width, self.height)
+
+  return instance
+end
+
+function Game:start()
+  -- make this window open again
   window.open()
 
+  self.state:init(self.width, self.height)
+
+  local function should_schedule()
+    return not (
+      self.state.status ~= "running" -- not if game over
+      or self.state.velocity == 0 -- not if no velocity
+    )
+  end
+
   local function loop()
-    GameState.update()
+    self.state:update()
 
-    GameState.view()
+    self.state:view()
 
-    -- quit if game over
-    if GameState.status == "game-over" then
+    -- return if game over
+    if self.state.status == "game-over" then
       return
     end
+
+    -- return if no velocity
+    if self.state.velocity == 0 then
+      return
+    end
+
     -- schedule next call
-    if GameState.velocity ~= 0 then
-      vim.defer_fn(loop, GameState.velocity)
+    if should_schedule() then
+      vim.defer_fn(loop, self.state.velocity)
     end
   end
 
@@ -102,11 +142,22 @@ Game.start = function()
   vim.defer_fn(loop, 0)
 end
 
-Game.setup = function()
+function Game:setup()
   -- commands
-  vim.api.nvim_create_user_command("Snake", function()
-    Game.start()
-  end, { desc = "Start Snake game" })
+  local function start()
+    self:start()
+  end
+
+  local function quit()
+    self.state.status = "idle"
+    window.close()
+  end
+
+  vim.api.nvim_create_user_command(
+    "Snake",
+    start,
+    { desc = "Start Snake game" }
+  )
 
   -- keymap
   local opts = {
@@ -117,29 +168,19 @@ Game.setup = function()
 
   for key in pairs(Snake.direction_map) do
     local move = function()
-      GameState.snake:change_dir(key)
+      self.state.snake:change_dir(key)
     end
 
     vim.keymap.set({ "n" }, key, move, opts)
   end
 
-  local function quit()
-    if GameState.velocity == 0 then
-      GameState.velocity = 500
-      Game.start()
-    else
-      GameState.velocity = 0
-    end
-  end
-
-  local function restart()
-    GameState.status = "running"
-    GameState.velocity = 500
-    Game.start()
-  end
-
   vim.keymap.set({ "n" }, "q", quit, opts)
-  vim.keymap.set({ "n" }, "r", restart, opts)
+  vim.keymap.set({ "n" }, "r", start, opts)
 end
 
-return Game
+return {
+  setup = function()
+    local game = Game:new()
+    game:setup()
+  end,
+}
