@@ -3,6 +3,15 @@ local Window = {
   win = nil,
 }
 
+Window.close = function()
+  if Window.win == nil then
+    return
+  end
+
+  vim.api.nvim_win_close(Window.win, true)
+  Window.win = nil
+end
+
 Window.open = function(opts)
   if Window.win ~= nil then
     return
