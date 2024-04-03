@@ -80,6 +80,20 @@ function Snake:change_dir(dir)
   self.direction = new_dir
 end
 
+function Snake:board_colision_check(width, height)
+  for _, pos in ipairs(self.queue) do
+    if pos.x <= 0 or pos.x > width then
+      return true
+    end
+
+    if pos.y <= 0 or pos.y > height then
+      return true
+    end
+  end
+
+  return false
+end
+
 Snake.direction_map = direction_map
 
 return Snake

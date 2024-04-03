@@ -22,9 +22,11 @@ local function make_empty_board(height, width)
   return board
 end
 
+-- TODO: move it to a class so we can restart/re-instantiate it
 -- initial state
 local GameState = {
   velocity = 500, -- ms
+  status = "running", -- 'running' | 'game-over'
   snake = Snake:new(),
   board = make_empty_board(board_height, board_width),
 }
@@ -33,7 +35,10 @@ GameState.update = function()
   -- update
   GameState.snake:move()
 
-  -- TODO: check board collision
+  if GameState.snake:board_colision_check(board_width, board_height) then
+    GameState.status = "game-over"
+  end
+
   -- TODO: check snake collision
 
   -- TODO: generate food
@@ -45,6 +50,19 @@ end
 
 GameState.view = function()
   local board = make_empty_board(board_height, board_width)
+
+  if GameState.status == "game-over" then
+    -- print game over screen
+    local view = {
+      "",
+      "Game Over 🐍❌",
+      "",
+      "Hit <C-r>  to restart",
+      "",
+    }
+    window.write_lines(view)
+    return
+  end
 
   -- print snake
   for _, pos in ipairs(GameState.snake.queue) do
@@ -70,6 +88,10 @@ Game.start = function()
 
     GameState.view()
 
+    -- quit if game over
+    if GameState.status == "game-over" then
+      return
+    end
     -- schedule next call
     if GameState.velocity ~= 0 then
       vim.defer_fn(loop, GameState.velocity)
@@ -109,7 +131,15 @@ Game.setup = function()
       GameState.velocity = 0
     end
   end
+
+  local function restart()
+    GameState.status = "running"
+    GameState.velocity = 500
+    Game.start()
+  end
+
   vim.keymap.set({ "n" }, "q", quit, opts)
+  vim.keymap.set({ "n" }, "r", restart, opts)
 end
 
 return Game
