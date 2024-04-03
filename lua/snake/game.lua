@@ -5,15 +5,15 @@ local window = R("snake.window")
 
 local empty_block = " "
 local snake_block = "#"
-local food_block = "o"
+local food_block = "❖"
 local vel_decrease_rate = 0.8 -- reduce velocity in 20% on each size increase
 
 local function make_empty_board(height, width)
   local board = {}
 
-  for i = 1, height do
+  for _ = 1, height do
     local line = {}
-    for j = 1, width do
+    for _ = 1, width do
       table.insert(line, empty_block)
     end
     table.insert(board, line)
@@ -60,8 +60,8 @@ function GameState:update()
 
   while not self.food do
     local pos = {
-      x = math.random(0, self.board_width),
-      y = math.random(0, self.board_height),
+      x = math.random(1, self.board_width),
+      y = math.random(1, self.board_height),
     }
 
     if not self.snake:is_over_position(pos) then
