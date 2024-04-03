@@ -54,7 +54,17 @@ Install it with your plugin manager, then add a keymap to the following command:
 :Snake
 ```
 
+To move your snake, you need to use `hjkl`:
+```sh
+h -> left
+j -> down
+k -> up
+l -> right
+```
+
 ### Demo
 
+https://github.com/marco-souza/snake.nvim/assets/4452113/22e73925-72ec-4af9-b1c3-023603229a16
 
-https://github.com/marco-souza/snake.nvim/assets/4452113/731bfc3e-6e4d-4363-a164-ac48487f2fc9
+
+
