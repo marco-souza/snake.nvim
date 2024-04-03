@@ -106,6 +106,20 @@ function Snake:snake_colision_check()
   return false
 end
 
+function Snake:grow(amount)
+  self.size = self.size + (amount or 1)
+end
+
+function Snake:is_over_position(check_pos)
+  for _, pos in ipairs(self.queue) do
+    if pos.x == check_pos.x and pos.y == check_pos.y then
+      return true
+    end
+  end
+
+  return false
+end
+
 Snake.direction_map = direction_map
 
 return Snake

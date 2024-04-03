@@ -5,6 +5,8 @@ local window = R("snake.window")
 
 local empty_block = " "
 local snake_block = "#"
+local food_block = "o"
+local vel_decrease_rate = 0.8 -- reduce velocity in 20% on each size increase
 
 local function make_empty_board(height, width)
   local board = {}
@@ -34,11 +36,12 @@ function GameState:new(width, height)
 end
 
 function GameState:init(width, hight)
-  self.velocity = 500 -- ms
+  self.velocity = 300 -- ms
   self.status = "running" -- 'idle' | 'running' | 'game-over'
   self.snake = Snake:new()
   self.board_width = width
   self.board_height = hight
+  self.food = nil
 end
 
 function GameState:update()
@@ -51,8 +54,27 @@ function GameState:update()
     self.status = "game-over"
   end
 
-  -- TODO: generate food
-  -- TODO: check food collision
+  -- generate food
+  -- random - https://www.codecademy.com/resources/docs/lua/mathematical-library/random
+  math.randomseed(vim.loop.now())
+
+  while not self.food do
+    local pos = {
+      x = math.random(0, self.board_width),
+      y = math.random(0, self.board_height),
+    }
+
+    if not self.snake:is_over_position(pos) then
+      self.food = pos
+    end
+  end
+
+  -- check food collision
+  if self.snake:is_over_position(self.food) then
+    self.food = nil
+    self.velocity = self.velocity * vel_decrease_rate
+    self.snake:grow()
+  end
 
   -- TODO: scoreboard
   -- TODO: restart game
@@ -77,6 +99,11 @@ function GameState:view()
   -- print snake
   for _, pos in ipairs(self.snake.queue) do
     board[pos.y][pos.x] = snake_block
+  end
+
+  -- print food
+  if self.food then
+    board[self.food.y][self.food.x] = food_block
   end
 
   -- make view
