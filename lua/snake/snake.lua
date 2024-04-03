@@ -48,14 +48,6 @@ function Snake:move()
   end
 end
 
-function Snake:print()
-  local res = ""
-  for index, value in ipairs(self.queue) do
-    res = res .. "(" .. value.x .. ", " .. value.y .. "), "
-  end
-  print(res)
-end
-
 function Snake:change_dir(dir)
   if direction_map[dir] == nil then
     print(dir .. " is a invalid direction")
