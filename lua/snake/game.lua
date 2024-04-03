@@ -44,11 +44,12 @@ end
 function GameState:update()
   self.snake:move()
 
-  if self.snake:board_colision_check(self.board_height, self.board_width) then
+  if
+    self.snake:board_colision_check(self.board_height, self.board_width)
+    or self.snake:snake_colision_check()
+  then
     self.status = "game-over"
   end
-
-  -- TODO: check snake collision
 
   -- TODO: generate food
   -- TODO: check food collision

@@ -90,6 +90,22 @@ function Snake:board_colision_check(height, width)
   return false
 end
 
+function Snake:snake_colision_check()
+  local pos_map = {}
+
+  for _, pos in ipairs(self.queue) do
+    local map_key = pos.x .. "," .. pos.y
+
+    if pos_map[map_key] then
+      return true
+    end
+
+    pos_map[map_key] = true
+  end
+
+  return false
+end
+
 Snake.direction_map = direction_map
 
 return Snake
