@@ -6,11 +6,8 @@ local direction_map = {
 }
 
 local initial_position = { x = 1, y = 1 }
-local Snake = {
-  queue = { initial_position },
-  direction = "r", -- u d l r
-  size = 3, -- snake size
-}
+
+local Snake = {}
 
 function Snake:new()
   local instance = {}
@@ -18,7 +15,13 @@ function Snake:new()
   setmetatable(instance, self)
   self.__index = self
 
-  self:init()
+  self.queue = { initial_position }
+  self.direction = "r" -- u d l r
+  self.size = 3 -- snake size
+
+  for _ = 1, self.size do
+    self:move()
+  end
 
   return instance
 end
@@ -42,13 +45,6 @@ function Snake:move()
 
   if #self.queue > self.size then
     table.remove(self.queue, #self.queue)
-  end
-end
-
-function Snake:init()
-  ---@diagnostic disable-next-line: unused-local
-  for i = 1, self.size do
-    self:move()
   end
 end
 
@@ -80,7 +76,7 @@ function Snake:change_dir(dir)
   self.direction = new_dir
 end
 
-function Snake:board_colision_check(width, height)
+function Snake:board_colision_check(height, width)
   for _, pos in ipairs(self.queue) do
     if pos.x <= 0 or pos.x > width then
       return true
