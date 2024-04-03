@@ -26,7 +26,7 @@ Window.open = function(opts)
   }
   -- center
   defaults.relative = "win"
-  defaults.row = 40
+  defaults.row = 20
   defaults.col = 40
 
   opts = vim.tbl_deep_extend("force", defaults, opts or {})
