@@ -16,6 +16,7 @@ function Snake:new()
   self.__index = self
 
   self.queue = { initial_position }
+  self.movements_queue = {}
   self.direction = "r" -- u d l r
   self.size = 3 -- snake size
 
@@ -28,6 +29,7 @@ end
 
 function Snake:move()
   local pos = vim.tbl_deep_extend("force", {}, self.queue[1])
+  self.direction = table.remove(self.movements_queue, 1) or self.direction
 
   if self.direction == "l" then
     pos.x = pos.x - 1
@@ -56,16 +58,18 @@ function Snake:change_dir(dir)
 
   local new_dir = direction_map[dir]
 
+  local last_dir = self.movements_queue[#self.movements_queue] or self.direction
+
   if
-    (new_dir == "l" and self.direction == "r")
-    or (new_dir == "r" and self.direction == "l")
-    or (new_dir == "u" and self.direction == "d")
-    or (new_dir == "d" and self.direction == "u")
+    (new_dir == "l" and last_dir == "r")
+    or (new_dir == "r" and last_dir == "l")
+    or (new_dir == "u" and last_dir == "d")
+    or (new_dir == "d" and last_dir == "u")
   then
     return
   end
 
-  self.direction = new_dir
+  table.insert(self.movements_queue, new_dir)
 end
 
 function Snake:board_colision_check(height, width)
