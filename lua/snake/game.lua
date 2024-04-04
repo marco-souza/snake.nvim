@@ -75,9 +75,6 @@ function GameState:update()
     self.velocity = self.velocity * vel_decrease_rate
     self.snake:grow()
   end
-
-  -- TODO: scoreboard
-  -- TODO: restart game
 end
 
 function GameState:view()
@@ -112,6 +109,14 @@ function GameState:view()
     table.insert(view, table.concat(line, ""))
   end
 
+  -- scoreboard
+  local score = string.format(
+    "Size: %d\tFrameRate: %.2f FPS",
+    self.snake.size,
+    1000 / self.velocity
+  )
+  table.insert(view, 1, score)
+
   window.write_lines(view)
 end
 
@@ -134,7 +139,7 @@ end
 
 function Game:start()
   -- make this window open again
-  window.open()
+  window.open({ height = self.height + 1 })
 
   self.state:init(self.width, self.height)
 
