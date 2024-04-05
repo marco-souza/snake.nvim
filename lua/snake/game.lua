@@ -154,17 +154,6 @@ function Game:start()
     self.state:update()
 
     self.state:view()
-
-    -- return if game over
-    if self.state.status == "game-over" then
-      return
-    end
-
-    -- return if no velocity
-    if self.state.velocity == 0 then
-      return
-    end
-
     -- schedule next call
     if should_schedule() then
       vim.defer_fn(loop, self.state.velocity)
