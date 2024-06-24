@@ -3,10 +3,11 @@ require("utils")
 local Snake = R("snake.snake")
 local window = R("snake.window")
 
-local empty_block = " "
-local snake_block = "#"
-local food_block = "❖"
-local vel_decrease_rate = 0.8 -- reduce velocity in 20% on each size increase
+local empty_block = "  "
+local snake_block = "██"
+local food_block = "🍎"
+local initial_vel = 300       -- ms
+local vel_decrease_rate = 0.9 -- reduce velocity in 20% on each size increase
 
 local function make_empty_board(height, width)
   local board = {}
@@ -36,8 +37,8 @@ function GameState:new(width, height)
 end
 
 function GameState:init(width, hight)
-  self.velocity = 300 -- ms
-  self.status = "running" -- 'idle' | 'running' | 'game-over'
+  self.velocity = initial_vel -- ms
+  self.status = "running"     -- 'idle' | 'running' | 'game-over'
   self.snake = Snake:new()
   self.board_width = width
   self.board_height = hight
@@ -48,8 +49,8 @@ function GameState:update()
   self.snake:move()
 
   if
-    self.snake:board_colision_check(self.board_height, self.board_width)
-    or self.snake:snake_colision_check()
+      self.snake:board_colision_check(self.board_height, self.board_width)
+      or self.snake:snake_colision_check()
   then
     self.status = "game-over"
   end
@@ -139,14 +140,14 @@ end
 
 function Game:start()
   -- make this window open again
-  window.open({ height = self.height + 1 })
+  window.open({ height = self.height + 1, width = self.width * #empty_block })
 
   self.state:init(self.width, self.height)
 
   local function should_schedule()
     return not (
       self.state.status ~= "running" -- not if game over
-      or self.state.velocity == 0 -- not if no velocity
+      or self.state.velocity == 0    -- not if no velocity
     )
   end
 
