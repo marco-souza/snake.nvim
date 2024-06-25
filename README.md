@@ -34,6 +34,7 @@
 </div>
 <hr />
 
+
 🐍 Snake game for Neovim (`snake.nvim`).
 
 ## Install
@@ -67,4 +68,5 @@ l -> right
 https://github.com/marco-souza/snake.nvim/assets/4452113/22e73925-72ec-4af9-b1c3-023603229a16
 
 
+https://github.com/marco-souza/snake.nvim/assets/4452113/77e6602c-974a-4b9b-960f-f4ba88da96ab
 
