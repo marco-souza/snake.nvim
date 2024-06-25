@@ -18,7 +18,7 @@ function Snake:new()
   self.queue = { initial_position }
   self.movements_queue = {}
   self.direction = "r" -- u d l r
-  self.size = 3 -- snake size
+  self.size = 3        -- snake size
 
   for _ = 1, self.size do
     self:move()
@@ -61,10 +61,10 @@ function Snake:change_dir(dir)
   local last_dir = self.movements_queue[#self.movements_queue] or self.direction
 
   if
-    (new_dir == "l" and last_dir == "r")
-    or (new_dir == "r" and last_dir == "l")
-    or (new_dir == "u" and last_dir == "d")
-    or (new_dir == "d" and last_dir == "u")
+      (new_dir == "l" and last_dir == "r")
+      or (new_dir == "r" and last_dir == "l")
+      or (new_dir == "u" and last_dir == "d")
+      or (new_dir == "d" and last_dir == "u")
   then
     return
   end
@@ -73,13 +73,29 @@ function Snake:change_dir(dir)
 end
 
 function Snake:board_colision_check(height, width)
+  local enable_colision = self.size > 1 -- dosable colision
+
   for _, pos in ipairs(self.queue) do
-    if pos.x <= 0 or pos.x > width then
-      return true
+    if not enable_colision then
+      -- if coliding with wall, game over
+      if pos.x <= 0 or pos.x > width then
+        return true
+      end
+
+      if pos.y <= 0 or pos.y > height then
+        return true
+      end
     end
 
-    if pos.y <= 0 or pos.y > height then
-      return true
+    -- teleport to the other wall
+    pos.x = pos.x % width
+    if pos.x == 0 then
+      pos.x = width
+    end
+
+    pos.y = pos.y % height
+    if pos.y == 0 then
+      pos.y = height
     end
   end
 
