@@ -43,7 +43,8 @@
 -- Lazy plugin
 {
   "marco-souza/snake.nvim",
-  config = true,
+  cmd = "Snake",
+  opts = {},
 },
 ```
 
